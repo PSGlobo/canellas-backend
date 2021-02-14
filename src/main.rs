@@ -1,18 +1,32 @@
-use actix_web::{web, App, HttpRequest, HttpServer, Responder};
+mod log;
 
-async fn hello(req: HttpRequest) -> impl Responder {
-    let name = req.match_info().get("name").unwrap_or("World");
-    format!("Hello {}!", &name)
-}
+use std::net::TcpListener;
 
-#[actix_rt::main]
+use cotid_server::{app::run_app, config::Settings, db::create_pool};
+use tracing::{debug, info};
+
+#[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new()
-            .route("/", web::get().to(hello))
-            .route("/{name}", web::get().to(hello))
-    })
-    .bind("127.0.0.1:8000")?
-    .run()
-    .await
+    dotenv::dotenv().ok();
+
+    let subscriber = log::get_subscriber("info".into());
+    log::init_subscriber(subscriber);
+    info!("Log started");
+
+    let settings = Settings::load().expect("Load settings");
+    info!("Settings loaded");
+
+    let pool = create_pool(&settings.database).await;
+    info!("Database connected");
+    debug!("{:?}", &pool);
+
+    let listener = TcpListener::bind((settings.host, settings.port))?;
+    let addr = listener.local_addr().unwrap();
+    info!(
+        "Server's connection listener set up on {}:{}",
+        addr.ip(),
+        addr.port()
+    );
+
+    run_app(listener, pool)?.await
 }
