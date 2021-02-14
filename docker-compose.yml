@@ -1,0 +1,18 @@
+# Docker Compose to setup the application dependencies locally. 
+
+version: '3.8'
+
+services:
+  database:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: $APP_DATABASE__USERNAME
+      POSTGRES_PASSWORD: $APP_DATABASE__PASSWORD
+      POSTGRES_DB: cotid
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data: {}
