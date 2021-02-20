@@ -10,7 +10,7 @@ pub async fn hello(req: HttpRequest) -> impl Responder {
 // TODO remove it when this test endpoint is no longer needed
 #[tracing::instrument]
 pub async fn db_test(pool: web::Data<PgPool>) -> impl Responder {
-    let rows = query_as::<_, (String,)>("SELECT * FROM teste")
+    let rows = query_as::<_, (String,)>("SELECT * FROM test")
         .fetch_all(pool.as_ref())
         .await
         .unwrap();
