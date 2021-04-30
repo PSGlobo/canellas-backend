@@ -20,9 +20,11 @@ pub struct Database {
     /// Database Host
     pub host: String,
     /// Identifier used to authenticate
-    pub username: String,
+    pub user: String,
     /// Username's password
     pub password: String,
+    /// Database's name
+    pub name: String,
 }
 
 impl Settings {
@@ -35,15 +37,16 @@ impl Settings {
     /// // Set the following environment variables in your .env file
     /// env::set_var("APP_HOST", "app_host");
     /// env::set_var("APP_PORT", "1234");
-    /// env::set_var("APP_DATABASE__USERNAME", "test");
+    /// env::set_var("APP_DATABASE__USER", "test");
     /// env::set_var("APP_DATABASE__PASSWORD", "123456");
     /// env::set_var("APP_DATABASE__HOST", "db_host");
+    /// env::set_var("APP_DATABASE__NAME", "cotid");
     ///
     /// let settings = Settings::load();
     /// assert!(settings.is_ok());
     ///
     /// let settings = settings.unwrap();
-    /// assert_eq!(settings.database.username, "test");
+    /// assert_eq!(settings.database.user, "test");
     /// ```
     ///
     pub fn load() -> Result<Self, ConfigError> {
@@ -57,8 +60,8 @@ impl Database {
     /// URI with all the information needed to connect with the DBMS.
     pub fn uri(&self) -> String {
         format!(
-            "postgres://{}:{}@{}:5432/cotid", // TODO extract database name to ENV VAR
-            self.username, self.password, self.host
+            "postgres://{}:{}@{}:5432/{}",
+            self.user, self.password, self.host, self.name
         )
     }
 }

@@ -5,4 +5,6 @@
 pub mod app;
 pub mod config;
 pub mod db;
-mod routes;
+mod handlers;
+
+pub use app::run_app;

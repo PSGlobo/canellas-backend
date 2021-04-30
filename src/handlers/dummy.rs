@@ -1,6 +1,12 @@
+//! # Dummy
+//!
+//! Endpoints to test the service execution.
+//!
+
 use actix_web::{web, HttpRequest, Responder};
 use sqlx::{query_as, PgPool};
 
+/// Hello, world!
 #[tracing::instrument(name = "Hello World", skip(req))]
 pub async fn hello(req: HttpRequest) -> impl Responder {
     let name = req.match_info().get("name").unwrap_or("World");
