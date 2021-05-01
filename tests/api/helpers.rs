@@ -24,22 +24,22 @@ async fn config_db(config: &cotid_server::config::Database) -> PgPool {
     // Create DB
     dbg!(config.uri());
     let options = PgConnectOptions::from_str(&config.uri())
-        .expect("Connection uri is not correct")
+        .expect("Connection URI is not correct")
         .database("postgres"); // This is a maintainance database from postgres.
 
     let mut connection = PgConnection::connect_with(&options)
         .await
-        .expect("Failed to connect to Postgres");
+        .expect("Is the database running? Failed to connect to Postgres");
 
     connection
         .execute(&*format!(r#"CREATE DATABASE "{}";"#, config.name))
         .await
-        .expect("Failed to create database.");
+        .expect("Failed to create database");
 
     // Migrate DB
     let connection_pool = PgPool::connect(&config.uri())
         .await
-        .expect("Failed to connect to Postgres.");
+        .expect("Is the database running? Failed to connect to Postgres");
 
     sqlx::migrate!("./migrations")
         .run(&connection_pool)

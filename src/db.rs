@@ -12,5 +12,5 @@ pub async fn create_pool(setting: &Database) -> PgPool {
         .connect_timeout(Duration::from_secs(2))
         .connect(&setting.uri())
         .await
-        .expect("Couldn't connect with DB")
+        .expect("Is the database running? Couldn't connect with it")
 }
