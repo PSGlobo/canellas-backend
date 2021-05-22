@@ -1,4 +1,4 @@
-//! Cotid Server
+//! PS Globo Backend
 
 #![warn(missing_docs)]
 

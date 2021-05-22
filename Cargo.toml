@@ -1,11 +1,9 @@
 [package]
 authors = [
   "Eduardo Canellas <eduardocanellas@id.uff.br>",
-  "Beatriz Tantow <beatriz.tantow@gmail.com>",
-  "André Pereira <andrelpoj@gmail.com>",
 ]
 edition = "2018"
-name = "cotid_server"
+name = "ps_globo"
 version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

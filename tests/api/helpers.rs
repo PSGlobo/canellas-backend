@@ -1,6 +1,6 @@
 use std::{net::TcpListener, str::FromStr};
 
-use cotid_server::{config::Settings, run_app};
+use ps_globo::{config::{self, Settings}, run_app};
 use sqlx::{postgres::PgConnectOptions, Connection, Executor, PgConnection, PgPool};
 
 pub async fn spawn_test_app() -> String {
@@ -20,7 +20,7 @@ pub async fn spawn_test_app() -> String {
     format!("http://127.0.0.1:{}", port)
 }
 
-async fn config_db(config: &cotid_server::config::Database) -> PgPool {
+async fn config_db(config: &config::Database) -> PgPool {
     // Create DB
     dbg!(config.uri());
     let options = PgConnectOptions::from_str(&config.uri())

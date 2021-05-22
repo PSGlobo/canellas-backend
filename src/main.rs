@@ -2,7 +2,7 @@ mod log;
 
 use std::net::TcpListener;
 
-use cotid_server::{app::run_app, config::Settings, db::create_pool};
+use ps_globo::{app::run_app, config::Settings, db::create_pool};
 use tracing::{debug, info};
 
 #[actix_web::main]

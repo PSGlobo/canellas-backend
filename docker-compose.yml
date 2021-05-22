@@ -6,9 +6,9 @@ services:
   database:
     image: postgres:13
     environment:
-      POSTGRES_USER: $APP_DATABASE__USERNAME
+      POSTGRES_USER: $APP_DATABASE__USER
       POSTGRES_PASSWORD: $APP_DATABASE__PASSWORD
-      POSTGRES_DB: cotid
+      POSTGRES_DB: $APP_DATABASE__NAME
     ports:
       - "5432:5432"
     volumes:

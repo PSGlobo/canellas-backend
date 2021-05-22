@@ -31,7 +31,7 @@ impl Settings {
     /// Creates an [Settings] instance based on the Environment Variables.
     ///
     /// ```
-    /// # use cotid_server::config::Settings;
+    /// # use ps_globo::config::Settings;
     /// # use std::env;
     /// #
     /// // Set the following environment variables in your .env file
@@ -40,7 +40,7 @@ impl Settings {
     /// env::set_var("APP_DATABASE__USER", "test");
     /// env::set_var("APP_DATABASE__PASSWORD", "123456");
     /// env::set_var("APP_DATABASE__HOST", "db_host");
-    /// env::set_var("APP_DATABASE__NAME", "cotid");
+    /// env::set_var("APP_DATABASE__NAME", "your_db");
     ///
     /// let settings = Settings::load();
     /// assert!(settings.is_ok());

@@ -1,5 +1,5 @@
 # MUST be the same as the crate's name
-ARG APP_NAME=cotid_server
+ARG APP_NAME=ps_globo
 
 ARG FOLDER=/usr/src/${APP_NAME}
 
