@@ -1,6 +1,9 @@
 use std::{net::TcpListener, str::FromStr};
 
-use ps_globo::{config::{self, Settings}, run_app};
+use ps_globo::{
+    config::{self, Settings},
+    run_app,
+};
 use sqlx::{postgres::PgConnectOptions, Connection, Executor, PgConnection, PgPool};
 
 pub async fn spawn_test_app() -> String {
