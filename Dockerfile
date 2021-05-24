@@ -31,11 +31,10 @@ FROM debian:buster-slim as production
 ARG FOLDER
 ARG APP_NAME
 
-# TODO run app as non-root user
+RUN useradd app
+USER app
 
 # Get binary from builder
-COPY --from=builder  ${FOLDER}/target/release/${APP_NAME} .
+COPY --from=builder --chown=app  ${FOLDER}/target/release/${APP_NAME} ./app
 
-EXPOSE 8000
-
-CMD ["./${APP_NAME}"]
+CMD ./app
