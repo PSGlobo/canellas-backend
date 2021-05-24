@@ -13,9 +13,7 @@ pub fn get_subscriber(env_filter: String) -> impl Subscriber + Sync + Send {
     let env_filter =
         EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new(env_filter));
     let formatting_layer = tracing_subscriber::fmt::layer();
-    Registry::default()
-        .with(env_filter)
-        .with(formatting_layer)
+    Registry::default().with(env_filter).with(formatting_layer)
 }
 
 /// Register a subscriber as global default to process span data.
