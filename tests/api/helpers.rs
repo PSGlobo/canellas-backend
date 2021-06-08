@@ -1,26 +1,62 @@
-use std::{net::TcpListener, str::FromStr};
+use std::str::FromStr;
 
 use ps_globo::{
+    app::App,
     config::{self, Settings},
-    run_app,
 };
 use sqlx::{postgres::PgConnectOptions, Connection, Executor, PgConnection, PgPool};
 
+pub async fn test_client() -> TestClient {
+    let host = spawn_test_app().await;
+
+    TestClient {
+        inner: reqwest::Client::new(),
+        host,
+    }
+}
+
+pub struct TestClient {
+    inner: reqwest::Client,
+    host: String,
+}
+
+impl TestClient {
+    pub async fn new() -> TestClient {
+        test_client().await
+    }
+
+    pub fn request(
+        &self,
+        method: reqwest::Method,
+        path: &str,
+        body: &impl serde::Serialize,
+    ) -> reqwest::RequestBuilder {
+        self.inner
+            .request(method, &format!("{}/{}", self.host, path))
+            .body(serde_json::to_string(body).unwrap())
+    }
+}
+
+/// Returns a `String` representing the host and the port used by the service.
 pub async fn spawn_test_app() -> String {
     dotenv::dotenv().ok();
 
-    let mut settings = Settings::load().unwrap();
-    settings.database.name = uuid::Uuid::new_v4().to_string();
+    let settings = {
+        let mut s = Settings::load().unwrap();
+        // Use different DB for each test
+        s.database.name = uuid::Uuid::new_v4().to_string();
+        // Use random port
+        s.port = 0;
+        s
+    };
 
-    let listener = TcpListener::bind("127.0.0.1:0").expect("couldn't bind to random port");
-    let port = listener.local_addr().unwrap().port();
-    dbg!(&settings);
-    let pool = config_db(&settings.database).await;
-    dbg!(&pool);
-    let app = run_app(listener, pool).unwrap();
-    tokio::spawn(app);
+    config_db(&settings.database).await;
 
-    format!("http://127.0.0.1:{}", port)
+    let app = App::build(&settings).await.unwrap();
+    let address = format!("http://127.0.0.1:{}", app.port());
+    tokio::spawn(app.run());
+
+    address
 }
 
 async fn config_db(config: &config::Database) -> PgPool {

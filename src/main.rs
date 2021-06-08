@@ -1,9 +1,7 @@
 mod log;
 
-use std::net::TcpListener;
-
-use ps_globo::{app::run_app, config::Settings, db::create_pool};
-use tracing::{debug, info};
+use ps_globo::{app::App, config::Settings};
+use tracing::info;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -16,17 +14,6 @@ async fn main() -> std::io::Result<()> {
     let settings = Settings::load().expect("Load settings");
     info!("Settings loaded");
 
-    let pool = create_pool(&settings.database).await;
-    info!("Database connected");
-    debug!("{:?}", &pool);
-
-    let listener = TcpListener::bind((settings.host, settings.port))?;
-    let addr = listener.local_addr().unwrap();
-    info!(
-        "Server's connection listener set up on {}:{}",
-        addr.ip(),
-        addr.port()
-    );
-
-    run_app(listener, pool)?.await
+    let app = App::build(&settings).await.expect("couldn't build the app");
+    app.run().await
 }

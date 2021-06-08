@@ -15,7 +15,7 @@
 //!
 //! The [app] module contains the server initialization, including the routes served by this service.
 //!
-//! To create the server, you'll need to take a look at [config] and [db] to get the args for [run_app].
+//! To start the server, you'll need to take a look at [App] and [Settings][config::Settings].
 //!
 
 #![warn(missing_docs)]
@@ -25,4 +25,4 @@ pub mod config;
 pub mod db;
 mod handlers;
 
-pub use app::run_app;
+pub use app::App;
