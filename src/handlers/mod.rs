@@ -5,3 +5,4 @@
 
 pub mod dummy;
 pub mod health_check;
+pub mod users;

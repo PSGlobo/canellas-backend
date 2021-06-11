@@ -24,5 +24,6 @@ pub mod app;
 pub mod config;
 pub mod db;
 mod handlers;
+pub mod repos;
 
 pub use app::App;

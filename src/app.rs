@@ -17,6 +17,7 @@ use crate::{
     handlers::{
         dummy::{db_test, hello},
         health_check::health_check,
+        *,
     },
 };
 
@@ -73,6 +74,7 @@ fn build_server(listener: TcpListener, pool: PgPool) -> Result<Server, std::io::
                     .route("/db", get().to(db_test))
                     .route("/{name}", get().to(hello)),
             )
+            .configure(users::handlers)
     })
     .listen(listener)?
     .run();

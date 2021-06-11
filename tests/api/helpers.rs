@@ -33,7 +33,7 @@ impl TestClient {
     ) -> reqwest::RequestBuilder {
         self.inner
             .request(method, &format!("{}/{}", self.host, path))
-            .body(serde_json::to_string(body).unwrap())
+            .json(body)
     }
 }
 
