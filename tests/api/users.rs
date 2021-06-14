@@ -9,7 +9,7 @@ use crate::helpers;
 
 #[derive(Debug, serde::Deserialize)]
 struct RespBody {
-    id: String,
+    id: i32,
     email: String,
 }
 
@@ -36,5 +36,20 @@ async fn create_user_works() {
     let body: RespBody = response.json().await.unwrap();
 
     assert_eq!(email, body.email);
-    assert!(!body.id.is_empty());
+
+    let response = client
+        .request(
+            Method::GET,
+            format!("users/{}", body.id).as_str(),
+            &serde_json::Value::Null,
+        )
+        .send()
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), 200);
+
+    let json: serde_json::Value = response.json().await.unwrap();
+    let received = json["email"].as_str().unwrap();
+    assert_eq!(received, email);
 }

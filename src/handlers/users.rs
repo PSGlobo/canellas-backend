@@ -1,11 +1,13 @@
-use actix_web::{
-    web::{self, post},
-    ResponseError,
-};
+use actix_web::{get, post, web, HttpResponse, ResponseError};
 use anyhow::Context;
-use sqlx::PgPool;
+use repos::users::Repo;
 
-use crate::repos::{self, users::NewUser};
+use crate::repos::{
+    self,
+    users::{NewUser, User},
+};
+
+use super::Pool;
 
 #[derive(Debug, thiserror::Error)]
 enum UserError {
@@ -16,11 +18,12 @@ enum UserError {
 impl ResponseError for UserError {}
 
 #[tracing::instrument]
+#[post("")]
 async fn create_user(
-    pool: web::Data<PgPool>,
+    pool: Pool,
     user: web::Json<NewUser>,
 ) -> Result<web::Json<serde_json::Value>, UserError> {
-    let repo = repos::users::Repo::new(pool.as_ref());
+    let repo = Repo::new(pool.as_ref());
 
     let id = repo
         .insert(&user.0)
@@ -33,6 +36,22 @@ async fn create_user(
     })))
 }
 
+#[tracing::instrument]
+#[get("/{id}")]
+async fn get_user(pool: Pool, path: web::Path<i32>) -> Result<web::Json<User>, actix_web::Error> {
+    let id = path.0;
+
+    let user = Repo::new(&pool)
+        .get_by_id(id)
+        .await
+        .map_err(|_| HttpResponse::NotFound())?;
+
+    Ok(web::Json(User {
+        id,
+        email: user.email,
+    }))
+}
+
 pub fn handlers(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::resource("/users").route(post().to(create_user)));
+    cfg.service(web::scope("/users").service(create_user).service(get_user));
 }
