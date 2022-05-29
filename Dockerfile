@@ -26,7 +26,7 @@ COPY . .
 # Building whole application
 RUN cargo build --release
 
-FROM debian:buster-slim as production
+FROM debian:10.12-slim as production
 
 ARG FOLDER
 ARG APP_NAME
